@@ -12,17 +12,17 @@ random.seed(100)
 
 
 class AWSDBConnector:
-
-    def __init__(self):
-
-        self.HOST = "pinterestdbreadonly.cq2e8zno855e.eu-west-1.rds.amazonaws.com"
-        self.USER = 'project_user'
-        self.PASSWORD = ':t%;yCY3Yjg'
-        self.DATABASE = 'pinterest_data'
-        self.PORT = 3306
+    def read_db_creds(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                db_creds = yaml.safe_load(file)
+            return db_creds
         
-    def create_db_connector(self):
-        engine = sqlalchemy.create_engine(f"mysql+pymysql://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}?charset=utf8mb4")
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
+        
+    def create_db_connector(self, credentials):
+        engine = sqlalchemy.create_engine(f"mysql+pymysql://{credentials['USER']}:{credentials['PASSWORD']}@{credentials['HOST']}:{credentials['PORT']}/{credentials['DATABASE']}?charset=utf8mb4")
         return engine
 
 
