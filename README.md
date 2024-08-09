@@ -2,16 +2,16 @@
 > The main motivation behind building this project comes from the idea of pintrest utilising the AWS Cloud to crunch billions of data points everyday to decide how to provide value to its cutomers. 
 > This project aims at emulating a similar system using the AWS Cloud.
 
-## MILESTONE 1: SETTING UP THE ENVIRONMENT
-### TASK 1: CREATE A REMOTE REPOSITORY AND CLONE IT.
+## Milestone 1: Setting up the environment
+### Task 1: Create a remote repository and clone it
 > To clone this repository type the command git clone
 
-### TASK 2: SET UP AWS CLOUD ACCOUNT
-> We will require an aws acccount with root access.
+### Task 2: Set up an aws account
+> We will require an aws acccount with root access. I was provided one while doing this project.
 
-## MILESTONE 2: GETTING STARTED
-### TASK 1: Downloaded the pintrest infrastructure
-- Run the "user_posting_emulation.py" file which contains three tables
+## Milestone 2: Getting Started
+### Task 1: Downloaded the pintrest infrastructure
+- Run the `user_posting_emulation.py` file which contains three tables
 - Create a separate db_creds.yaml file for storing the credentials.
 > Add the yaml file to .gitignore 
 
