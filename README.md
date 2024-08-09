@@ -39,7 +39,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - Run the ssh command `ssh -i "<keypair.pem>" ec2-user@ec2-3-93-70-12.compute-1.amazonaws.com` in the terminal also shown on the ssh instructions page in the terminal.
 - Please ensure that your .pem file is within the same directory as where you are running this command.
 - Secondly, ensure that your .pem file is named as correctly.
-> If everything ran succesfully you should see the "complete!" returned on the terminal.
+> If everything ran succesfully you should see "complete!" returned on the terminal.
 
 #### Task 3: Installing kafka on EC2 client machine
 ##### Step 1 : 
@@ -56,8 +56,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - This package is necessary to connect to MSK clusters that require IAM authentication.
 - Once downloaded, a file named `aws-msk-iam-auth-1.1.5-all.jar` will be shown inside the libs directory.
 - Created `CLASSPATH` variable to store the location of the aws jar file so that it can be accessed from any directory.
-- Save this command inside the `nano ~/.zshrc` file:
-`export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar` 
+- Save the following command `export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar` inside the `nano ~/.zshrc` file:
 - Once saved run `source ~/.zshrc`
 - To verify the path is set run `echo $CLASSPATH` it should return the location of the jar file.
 ##### Step 3: Configure kafka to use AWS IAM service
@@ -96,14 +95,13 @@ The clients configuration file should contain the following:
 - Make a note of the bucket name, it will have the following format
 `user-<your_UserId>-bucket`
 ##### Step 2: Download the Confluent.io AMAZON S3 connector
-On the EC2 client download the `Confluent.io Amazon S3 Connector` and copy it to the S3 bucket you have identified in the previous step.
-#In EC2 assume admin user privileges:
+- In EC2 assume admin user privileges:
 `sudo -u ec2-user -i`
-#Create directory where we will save our connector:
+- Create directory where we will save our connector:
 `mkdir kafka-connect-s3 && cd kafka-connect-s3`
-#Download confluent connector using the following code:
+- Download confluent connector using the following code:
 `Wget https://d2p6pa21dvn84.cloudfront.net/api/plugins/confluentinc/kafka-connect-s3/versions/10.5.13/confluentinc-kafka-connect-s3-10.5.13.zip`
-#Copy connector to our s3 bucket:
+- Copy connector to our s3 bucket:
 `aws s3 cp ./confluentinc-kafka-connect-s3-10.5.13.zip s3://<BUCKET_NAME>/kafka-connect-s3/`
 - Replace the correct version of confluent zip file, at the time of writing this readme file, the correct version is `10.5.13.zip`.
 - Once this is done you can navigate to the s3 bucket and see that connector is uploaded inside the `kafka-connect-s3/` folder.
@@ -120,24 +118,22 @@ Once the plugin has been created you should see the following message at the top
 - In the list of plugin, select the plugin you have just created, and then click Next. 
 - For the connector name choose the desired name, and then choose your MSK cluster from the cluster list.
 - In the Connector configuration settings copy the following configuration:
-`
-connector.class=io.confluent.connect.s3.S3SinkConnector
+`connector.class=io.confluent.connect.s3.S3SinkConnector`
 #same region as our bucket and cluster
-s3.region=us-east-1
-flush.size=1
-schema.compatibility=NONE
-tasks.max=3
+`s3.region=us-east-1`
+`flush.size=1`
+`schema.compatibility=NONE`
+`tasks.max=3`
 #include nomeclature of topic name, given here as an example will read all data from topic names starting with msk.topic....
-topics.regex=<YOUR_UUID>.*
-format.class=io.confluent.connect.s3.format.json.JsonFormat
-partitioner.class=io.confluent.connect.storage.partitioner.DefaultPartitioner
-value.converter.schemas.enable=false
-value.converter=org.apache.kafka.connect.json.JsonConverter
-storage.class=io.confluent.connect.s3.storage.S3Storage
-key.converter=org.apache.kafka.connect.storage.StringConverter
-s3.bucket.name=<BUCKET_NAME>
-`
-#Make sure to replace the `bucket name` and `UUID` in the topics.regex field explicitly.
+`topics.regex=<YOUR_UUID>.*`
+`format.class=io.confluent.connect.s3.format.json.JsonFormat`
+`partitioner.class=io.confluent.connect.storage.partitioner.DefaultPartitioner`
+`value.converter.schemas.enable=false`
+`value.converter=org.apache.kafka.connect.json.JsonConverter`
+`storage.class=io.confluent.connect.s3.storage.S3Storage`
+`key.converter=org.apache.kafka.connect.storage.StringConverter`
+`s3.bucket.name=<BUCKET_NAME>`
+- Make sure to replace the `bucket name` and `UUID` in the topics.regex field explicitly.
 > Leave the rest of the configurations as default, except for:
 - Connector type change to Provisioned and make sure both the MCU count per worker and Number of workers are set to 1
 - Worker Configuration, select Use a custom configuration, then pick confluent-worker
