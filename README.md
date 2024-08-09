@@ -65,21 +65,21 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - From the Trust relationships tab Edited trust policy by clicking on add principal and selecting IAM roles as principal type.
 - Replace the ARN with the ARN we copied from the IAM roles console.
 - By following the steps above you will be able to now assume the <UserId>-ec2-access-role, which contains the necessary permissions to authenticate to the MSK cluster.
-##### Step 4: NAVIGATE TO KAFKA/BIN DIRECTORY AND CONFIGURE CLIENT PROPERTIES FILE
+##### Step 4: Navigate to the Kafka/bin directory and configure the client properties file 
 - Create a client.properties file using command:
 `nano client.properties` 
-> The clients configuration file should contain the following:
-#Sets up TLS for encryption and SASL for authN:
+The clients configuration file should contain the following:
+#Sets up TLS for encryption and SASL for authN
 `security.protocol = SASL_SSL`
-#Identifies the SASL mechanism to use:
+#Identifies the SASL mechanism to use
 `sasl.mechanism = AWS_MSK_IAM`
-#Binds SASL client implementation:
+#Binds SASL client implementation
 `sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
 #Encapsulates constructing a SigV4 signature based on extracted credentials
 #The SASL client bound by "sasl.jaas.config" invokes this class
 `sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
 - Make sure to enter the EC2 access role we copied form the IAM ROLES in "<Your Access Role>".
-#### Task 4: CREATING TOPICS ON KAFKA CLIENT MACHINE
+#### Task 4: Creating topics on the Kafka client
 - As you know before creating a topic we first need to have information about the cluster Bootstrap server string and the Plaintext Apache Zookeeper connection string.
 ##### Step 1:
 - Go to MSK and select the cluster, and click view client information.
@@ -89,21 +89,21 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 `./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name> `
 - Remember to replace the bootstrapserverstring from the cluster information tab while running the create topic command in the terminal.
 
-## Milestone 4: CONNECTING MSK CLUSTER TO A S3 BUCKET:
+## Milestone 4: Connecting MSK cluster to S3 bucket:
 #### Task 1 : Create a custom plugin with MSK Connect
 ##### Step 1:
-> Navigate to the S3 console and find the bucket that contains your USERID
+> Navigate to the S3 console and find the bucket that contains your `USERID`
 - Make a note of the bucket name, it will have the following format
 `user-<your_UserId>-bucket`
 ##### Step 2: Download the Confluent.io AMAZON S3 connector
-> On the EC2 client download the `Confluent.io Amazon S3 Connector` and copy it to the S3 bucket you have identified in the previous step.
-#In EC2 assume admin user privileges
+On the EC2 client download the `Confluent.io Amazon S3 Connector` and copy it to the S3 bucket you have identified in the previous step.
+#In EC2 assume admin user privileges:
 `sudo -u ec2-user -i`
-#Create directory where we will save our connector 
+#Create directory where we will save our connector:
 `mkdir kafka-connect-s3 && cd kafka-connect-s3`
 #Download confluent connector using the following code:
 `Wget https://d2p6pa21dvn84.cloudfront.net/api/plugins/confluentinc/kafka-connect-s3/versions/10.5.13/confluentinc-kafka-connect-s3-10.5.13.zip`
-#Copy connector to our s3 bucket 
+#Copy connector to our s3 bucket:
 `aws s3 cp ./confluentinc-kafka-connect-s3-10.5.13.zip s3://<BUCKET_NAME>/kafka-connect-s3/`
 - Replace the correct version of confluent zip file, at the time of writing this readme file, the correct version is `10.5.13.zip`.
 - Once this is done you can navigate to the s3 bucket and see that connector is uploaded inside the `kafka-connect-s3/` folder.
@@ -112,7 +112,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - Choose Create custom plugin.
 - Click Browse S3 on the top right of the custom plugin page and find the bucket where you upload the Confluent connector ZIP file.
 - Then, in the list of objects in that bucket select the ZIP file and select the Choose button. Give the plugin a name and press Create custom plugin.
-> Once the plugin has been created you should see the following message at the top of your browser window:
+Once the plugin has been created you should see the following message at the top of your browser window:
 `plugin <PLUGIN_NAME> was successfully created. The custom plugin was created. You can now create a connector using this custom plugin`
 #### Task 2: Create a connector with MSK Connect
 - In the MSK console, select Connectors under the MSK Connect section on the left side of the console. 
@@ -137,13 +137,13 @@ storage.class=io.confluent.connect.s3.storage.S3Storage
 key.converter=org.apache.kafka.connect.storage.StringConverter
 s3.bucket.name=<BUCKET_NAME>
 `
-- Make sure to replace the bucket name and UUID in the topics.regex field explicitly.
+#Make sure to replace the `bucket name` and `UUID` in the topics.regex field explicitly.
 > Leave the rest of the configurations as default, except for:
 - Connector type change to Provisioned and make sure both the MCU count per worker and Number of workers are set to 1
 - Worker Configuration, select Use a custom configuration, then pick confluent-worker
 - Access permissions, where you should select the IAM role you have created previously
 - Skip the rest of the pages until you get to Create connector button page. 
-> Once your connector is up and running you will be able to visualise it in the Connectors tab in the MSK console.
+> Once your connector is up and running you will be able to visualise it in the connectors tab in the MSK console.
 
 ## Milestone 5: Batch processing : Configuring an API in API gateway
 #### Task 1: Build a Kafka REST proxy integration method for the API
@@ -151,7 +151,7 @@ For this project we will not need to create our own API, as I have been provided
 ##### Step 1:
 Create a resource that allows you to build a PROXY integration for your API.
 ##### Step 2:
-For the previously created resource, create a HTTP ANY method. When setting up the Endpoint URL, make sure to copy the correct PublicDNS, from the EC2 machine you have been working on in the previous milestones.
+For the previously created resource, create a `HTTP ANY` method. When setting up the Endpoint URL, make sure to copy the correct PublicDNS, from the EC2 machine you have been working on in the previous milestones.
 - Remember, this EC2 should have the same name as your UserId.
 ##### Step 3:
 Deploy the API and make a note of the Invoke URL, as you will need it in a later task.
