@@ -12,14 +12,14 @@ This project aims at emulating a similar system using the AWS Cloud.
 
 ## Milestone 2: Getting started
 #### Task 1: Downloaded the pintrest infrastructure
-- Run the `user_posting_emulation.py` file which contains three tables
+- Run the `user_posting_emulation.py` file which contains three tables.
 - Create a separate db_creds.yaml file for storing the credentials.
-- Add the yaml file to .gitignore 
+- Add the yaml file to .gitignore.
 
 #### Task 2: Signing in to the AWS console
 ##### Step 1:
 > Navigate to https://aws.amazon.com/  to sign in to the AWS Console.
-#### Step 2:
+##### Step 2:
 > To login we will need the following credentials:
 - Account ID
 - IAM user name
@@ -43,11 +43,11 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 
 #### Task 3: Installing kafka on EC2 client machine
 ##### Step 1 : 
-- Once inside the EC2 client, install java using the following command
+- Once inside the EC2 client, install java using the following command:
 `sudo yum install java-1.8.0`
 - Because the cluster is runnning on 2.12-2.8.1 version we will install the same version of kafka i.e (2.12-2.8.1) on the ec2 instance, otherwise we wouldn't be able to communicate with the MSK cluster.
-- `wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz`
-- `tar -xzf kafka_2.12-2.8.1.tgz`
+- Download kafka using command `wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz`.
+- Unzip the file using `tar -xzf kafka_2.12-2.8.1.tgz`.
 ##### Step 2: Installing AWS IAM authentication package
 - To send messages to a topic or create topics on the MSK cluster, the client needs to be authenticated, as we know MSK uses IAM to authenticate and authorize requests from client.
 - The aws account I am working with already has a preconfigured IAM authenticated MSK cluster, so i wont be creating one.
@@ -55,7 +55,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 `wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.5/aws-msk-iam-auth-1.1.5-all.jar`
 - This package is necessary to connect to MSK clusters that require IAM authentication.
 - Once downloaded, a file named `aws-msk-iam-auth-1.1.5-all.jar` will be shown inside the libs directory.
-- Created CLASSPATH variable to store the location of the aws jar file so that it can be accessed from any directory using the command 
+- Created `CLASSPATH` variable to store the location of the aws jar file so that it can be accessed from any directory.
 - Save this command inside the `nano ~/.zshrc` file:
 `export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar` 
 - Once saved run `source ~/.zshrc`
@@ -66,17 +66,17 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - Replace the ARN with the ARN we copied from the IAM roles console.
 - By following the steps above you will be able to now assume the <UserId>-ec2-access-role, which contains the necessary permissions to authenticate to the MSK cluster.
 ##### Step 4: NAVIGATE TO KAFKA/BIN DIRECTORY AND CONFIGURE CLIENT PROPERTIES FILE
-- Create a client.properties file
+- Create a client.properties file using command:
 `nano client.properties` 
 > The clients configuration file should contain the following:
-- #Sets up TLS for encryption and SASL for authN.
+#Sets up TLS for encryption and SASL for authN:
 `security.protocol = SASL_SSL`
-- #Identifies the SASL mechanism to use.
+#Identifies the SASL mechanism to use:
 `sasl.mechanism = AWS_MSK_IAM`
-- #Binds SASL client implementation.
+#Binds SASL client implementation:
 `sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
-- #Encapsulates constructing a SigV4 signature based on extracted credentials.
-- #The SASL client bound by "sasl.jaas.config" invokes this class.
+#Encapsulates constructing a SigV4 signature based on extracted credentials
+#The SASL client bound by "sasl.jaas.config" invokes this class
 `sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
 - Make sure to enter the EC2 access role we copied form the IAM ROLES in "<Your Access Role>".
 #### Task 4: CREATING TOPICS ON KAFKA CLIENT MACHINE
@@ -85,37 +85,36 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - Go to MSK and select the cluster, and click view client information.
 - Make note of the cluster Bootstrap server string and the Plaintext Apache Zookeeper connection string.
 ##### Step 2:
-- Created three topics namely, userid.pin, userid.geo, userid.user replacing with my userid explicitly.
-- Using the following syntax:
+- Created three topics namely, userid.pin, userid.geo, userid.user replacing with my userid explicitly using the following syntax:
 `./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name> `
 - Remember to replace the bootstrapserverstring from the cluster information tab while running the create topic command in the terminal.
 
 ## Milestone 4: CONNECTING MSK CLUSTER TO A S3 BUCKET:
-### Task 1 : CREATE A CUSTOM PLUGIN WITH MSK CONNECT
+#### Task 1 : Create a custom plugin with MSK Connect
 ##### Step 1:
 > Navigate to the S3 console and find the bucket that contains your USERID
 - Make a note of the bucket name, it will have the following format
 `user-<your_UserId>-bucket`
-##### Step 2: DOWNLOAD THE CONFLUENT.IO AMAZON S3 CONNECTOR
+##### Step 2: Download the Confluent.io AMAZON S3 connector
 > On the EC2 client download the `Confluent.io Amazon S3 Connector` and copy it to the S3 bucket you have identified in the previous step.
-- #In EC2 assume admin user privileges
+#In EC2 assume admin user privileges
 `sudo -u ec2-user -i`
-- #Create directory where we will save our connector 
+#Create directory where we will save our connector 
 `mkdir kafka-connect-s3 && cd kafka-connect-s3`
-- #Download confluent connector using the following code:
+#Download confluent connector using the following code:
 `Wget https://d2p6pa21dvn84.cloudfront.net/api/plugins/confluentinc/kafka-connect-s3/versions/10.5.13/confluentinc-kafka-connect-s3-10.5.13.zip`
-- #Copy connector to our s3 bucket 
+#Copy connector to our s3 bucket 
 `aws s3 cp ./confluentinc-kafka-connect-s3-10.5.13.zip s3://<BUCKET_NAME>/kafka-connect-s3/`
 - Replace the correct version of confluent zip file, at the time of writing this readme file, the correct version is `10.5.13.zip`.
 - Once this is done you can navigate to the s3 bucket and see that connector is uploaded inside the `kafka-connect-s3/` folder.
-##### Step 3: CREATE A CUSTOM PLUGIN
+##### Step 3: Create a custom plugin
 - Now, open the MSK console and select Custom plugins under the MSK Connect section on the left side of the console.
 - Choose Create custom plugin.
 - Click Browse S3 on the top right of the custom plugin page and find the bucket where you upload the Confluent connector ZIP file.
 - Then, in the list of objects in that bucket select the ZIP file and select the Choose button. Give the plugin a name and press Create custom plugin.
 > Once the plugin has been created you should see the following message at the top of your browser window:
 `plugin <PLUGIN_NAME> was successfully created. The custom plugin was created. You can now create a connector using this custom plugin`
-#### Task 2: CREATE A CONNECTOR WITH MSK CONNECT
+#### Task 2: Create a connector with MSK Connect
 - In the MSK console, select Connectors under the MSK Connect section on the left side of the console. 
 - Choose Create connector.
 - In the list of plugin, select the plugin you have just created, and then click Next. 
@@ -146,25 +145,25 @@ s3.bucket.name=<BUCKET_NAME>
 - Skip the rest of the pages until you get to Create connector button page. 
 > Once your connector is up and running you will be able to visualise it in the Connectors tab in the MSK console.
 
-## Milestone 5: BATCH PROCESSING : CONFIGURING AN API IN API GATEWAY
-#### Task 1: BUILD A KAFKA REST PROXY INTEGRATION METHOD FOR THE API
-> For this project we will not need to create our own API, as I have been provided with one already. The API name will be the same as UserId.
+## Milestone 5: Batch processing : Configuring an API in API gateway
+#### Task 1: Build a Kafka REST proxy integration method for the API
+For this project we will not need to create our own API, as I have been provided with one already. The API name will be the same as UserId.
 ##### Step 1:
-> Create a resource that allows you to build a PROXY integration for your API.
+Create a resource that allows you to build a PROXY integration for your API.
 ##### Step 2:
-> For the previously created resource, create a HTTP ANY method. When setting up the Endpoint URL, make sure to copy the correct PublicDNS, from the EC2 machine you have been working on in the previous milestones.
+For the previously created resource, create a HTTP ANY method. When setting up the Endpoint URL, make sure to copy the correct PublicDNS, from the EC2 machine you have been working on in the previous milestones.
 - Remember, this EC2 should have the same name as your UserId.
 ##### Step 3:
-> Deploy the API and make a note of the Invoke URL, as you will need it in a later task.
+Deploy the API and make a note of the Invoke URL, as you will need it in a later task.
 
-#### Task 2: SET UP THE KAFKA REST PROXY ON THE EC2 CLIENT
-> Now that you have set up the Kafka REST Proxy integration for your API, you need to set up the Kafka REST Proxy on your EC2 client machine.
+#### Task 2: Set up the Kafka REST proxy on the EC2 client
+Now that you have set up the Kafka REST Proxy integration for your API, you need to set up the Kafka REST Proxy on your EC2 client machine.
 ##### Step 1:
-> First, install the Confluent package for the Kafka REST Proxy on your EC2 client machine.
+First, install the Confluent package for the Kafka REST Proxy on your EC2 client machine.
 ##### Step 2:
-> Allow the REST proxy to perform IAM authentication to the MSK cluster by modifying the kafka-rest.properties file.
+Allow the REST proxy to perform IAM authentication to the MSK cluster by modifying the kafka-rest.properties file.
 ##### Step 3:
-> Start the REST proxy on the EC2 client machine.
+Start the REST proxy on the EC2 client machine.
 
 
 
