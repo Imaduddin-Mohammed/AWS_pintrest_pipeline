@@ -3,10 +3,11 @@
 > This project aims at emulating a similar system using the AWS Cloud.
 
 ## Milestone 1: Setting up the environment
-### task 1: Create a remote repository and clone it
-> To clone this repository locally run the following command on your terminal `git clone https://github.com/Imaduddin-Mohammed/AWS_pintrest_pipeline.git`.
+### Task 1: Create a remote repository and clone it
+- To clone this repository locally run the following command inside your terminal
+`git clone https://github.com/Imaduddin-Mohammed/AWS_pintrest_pipeline.git`.
 
-### task 2: Set up an AWS account
+### Task 2: Set up an AWS account
 > We will require an aws acccount with root access. I was provided one while doing this project.
 
 ## Milestone 2: Getting started
