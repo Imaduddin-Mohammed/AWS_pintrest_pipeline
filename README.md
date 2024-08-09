@@ -67,7 +67,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 ##### Step 4: Navigate to the Kafka/bin directory and configure the client properties file 
 - Create a client.properties file using command:
 `nano client.properties`
-- The clients configuration file should contain the following:
+The clients configuration file should contain the following:
 #sets up TLS for encryption and SASL for authN
 `security.protocol = SASL_SSL`
 #identifies the SASL mechanism to use
