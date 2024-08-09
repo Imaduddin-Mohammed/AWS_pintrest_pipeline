@@ -68,14 +68,14 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - Create a client.properties file using command:
 `nano client.properties`
 - The clients configuration file should contain the following:
-#Sets up TLS for encryption and SASL for authN
-- `security.protocol = SASL_SSL`
-#Identifies the SASL mechanism to use
-- `sasl.mechanism = AWS_MSK_IAM`
-#Binds SASL client implementation
-- `sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
-#Encapsulates constructing a SigV4 signature based on extracted credentials
-#The SASL client bound by "sasl.jaas.config" invokes this class
+#sets up TLS for encryption and SASL for authN
+`security.protocol = SASL_SSL`
+#identifies the SASL mechanism to use
+`sasl.mechanism = AWS_MSK_IAM`
+#binds SASL client implementation
+`sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
+#encapsulates constructing a SigV4 signature based on extracted credentials
+#the SASL client bound by "sasl.jaas.config" invokes this class
 - `sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
 - Make sure to enter the EC2 access role we copied form the IAM ROLES in "<Your Access Role>".
 #### Task 4: Creating topics on the Kafka client
