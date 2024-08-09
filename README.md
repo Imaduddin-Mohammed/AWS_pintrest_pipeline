@@ -118,21 +118,24 @@ Once the plugin has been created you should see the following message at the top
 - In the list of plugin, select the plugin you have just created, and then click Next. 
 - For the connector name choose the desired name, and then choose your MSK cluster from the cluster list.
 - In the Connector configuration settings copy the following configuration:
-`connector.class=io.confluent.connect.s3.S3SinkConnector`
-same region as our bucket and cluster
--`s3.region=us-east-1`
--`flush.size=1`
--`schema.compatibility=NONE`
--`tasks.max=3`
-include nomeclature of topic name, given here as an example will read all data from topic names starting with msk.topic....
-`topics.regex=<YOUR_UUID>.*`
-`format.class=io.confluent.connect.s3.format.json.JsonFormat`
-`partitioner.class=io.confluent.connect.storage.partitioner.DefaultPartitioner`
-`value.converter.schemas.enable=false`
-`value.converter=org.apache.kafka.connect.json.JsonConverter`
-`storage.class=io.confluent.connect.s3.storage.S3Storage`
-`key.converter=org.apache.kafka.connect.storage.StringConverter`
-`s3.bucket.name=<BUCKET_NAME>`
+
+- `connector.class=io.confluent.connect.s3.S3SinkConnector`
+#same region as our bucket and cluster
+- `s3.region=us-east-1`
+- `flush.size=1`
+- `schema.compatibility=NONE`
+- `tasks.max=3`
+
+#include nomeclature of topic name, given here as an example will read all data from topic names starting with msk.topic....
+- `topics.regex=<YOUR_UUID>.*`
+- `format.class=io.confluent.connect.s3.format.json.JsonFormat`
+- `partitioner.class=io.confluent.connect.storage.partitioner.DefaultPartitioner`
+- `value.converter.schemas.enable=false`
+- `value.converter=org.apache.kafka.connect.json.JsonConverter`
+- `storage.class=io.confluent.connect.s3.storage.S3Storage`
+- `key.converter=org.apache.kafka.connect.storage.StringConverter`
+- `s3.bucket.name=<BUCKET_NAME>`
+
 - Make sure to replace the `bucket name` and `UUID` in the topics.regex field explicitly.
 > Leave the rest of the configurations as default, except for:
 - Connector type change to Provisioned and make sure both the MCU count per worker and Number of workers are set to 1
