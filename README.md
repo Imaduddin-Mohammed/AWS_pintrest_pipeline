@@ -66,17 +66,17 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - By following the steps above you will be able to now assume the <UserId>-ec2-access-role, which contains the necessary permissions to authenticate to the MSK cluster.
 ##### Step 4: Navigate to the Kafka/bin directory and configure the client properties file 
 - Create a client.properties file using command:
-`nano client.properties` 
-The clients configuration file should contain the following:
+`nano client.properties`
+- The clients configuration file should contain the following:
 #Sets up TLS for encryption and SASL for authN
-`security.protocol = SASL_SSL`
+- `security.protocol = SASL_SSL`
 #Identifies the SASL mechanism to use
-`sasl.mechanism = AWS_MSK_IAM`
+- `sasl.mechanism = AWS_MSK_IAM`
 #Binds SASL client implementation
-`sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
+- `sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
 #Encapsulates constructing a SigV4 signature based on extracted credentials
 #The SASL client bound by "sasl.jaas.config" invokes this class
-`sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
+- `sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
 - Make sure to enter the EC2 access role we copied form the IAM ROLES in "<Your Access Role>".
 #### Task 4: Creating topics on the Kafka client
 - As you know before creating a topic we first need to have information about the cluster Bootstrap server string and the Plaintext Apache Zookeeper connection string.
@@ -119,12 +119,12 @@ Once the plugin has been created you should see the following message at the top
 - For the connector name choose the desired name, and then choose your MSK cluster from the cluster list.
 - In the Connector configuration settings copy the following configuration:
 `connector.class=io.confluent.connect.s3.S3SinkConnector`
-#same region as our bucket and cluster
-`s3.region=us-east-1`
-`flush.size=1`
-`schema.compatibility=NONE`
-`tasks.max=3`
-#include nomeclature of topic name, given here as an example will read all data from topic names starting with msk.topic....
+same region as our bucket and cluster
+-`s3.region=us-east-1`
+-`flush.size=1`
+-`schema.compatibility=NONE`
+-`tasks.max=3`
+include nomeclature of topic name, given here as an example will read all data from topic names starting with msk.topic....
 `topics.regex=<YOUR_UUID>.*`
 `format.class=io.confluent.connect.s3.format.json.JsonFormat`
 `partitioner.class=io.confluent.connect.storage.partitioner.DefaultPartitioner`
