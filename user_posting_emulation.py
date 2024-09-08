@@ -1,12 +1,13 @@
 import requests
 from time import sleep
 import random
+import yaml
 from multiprocessing import Process
-import boto3
+#import boto3
 import json
 import sqlalchemy
 from sqlalchemy import text
-import yaml
+from decouple import config
 
 
 random.seed(100)
@@ -14,23 +15,14 @@ random.seed(100)
 
 class AWSDBConnector:
 
-    # def __init__(self):
+    def __init__(self):
+        creds_config_access = config('credentials_env')
+        with open(creds_config_access, 'r') as db_creds:
+            self.creds= yaml.safe_load(db_creds)
 
-    #     self.HOST = "pinterestdbreadonly.cq2e8zno855e.eu-west-1.rds.amazonaws.com"
-    #     self.USER = 'project_user'
-    #     self.PASSWORD = ':t%;yCY3Yjg'
-    #     self.DATABASE = 'pinterest_data'
-    #     self.PORT = 3306
-
-    def read_cred(self, filepath):
-        with open (filepath, 'r') as file:
-            db_cred = yaml.safe_load(file)
-            return db_cred
-        
-    def create_db_connector(self, credentials):
-        engine = sqlalchemy.create_engine(f"mysql+pymysql://{credentials['USER']}:{credentials['PASSWORD']}@{credentials['HOST']}:{credentials['PORT']}/{credentials['DATABASE']}?charset=utf8mb4")
+    def create_db_connector(self):
+        engine = sqlalchemy.create_engine(f"mysql+pymysql://{self.creds['USER']}:{self.creds['PASSWORD']}@{self.creds['HOST']}:{self.creds['PORT']}/{self.creds['DATABASE']}?charset=utf8mb4")
         return engine
-
 
 new_connector = AWSDBConnector()
 
@@ -41,7 +33,6 @@ def run_infinite_post_data_loop():
         random_row = random.randint(0, 11000)
         engine = new_connector.create_db_connector()
 
-        #context manager 
         with engine.connect() as connection:
 
             pin_string = text(f"SELECT * FROM pinterest_data LIMIT {random_row}, 1")
@@ -66,10 +57,10 @@ def run_infinite_post_data_loop():
             print(geo_result)
             print(user_result)
 
+
 if __name__ == "__main__":
     run_infinite_post_data_loop()
     print('Working')
-
     
     
 

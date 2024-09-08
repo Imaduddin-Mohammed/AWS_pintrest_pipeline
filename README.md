@@ -95,7 +95,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - Make a note of the bucket name, it will have the following format
 `user-<your_UserId>-bucket`
 ##### Step 2: Download the Confluent.io AMAZON S3 connector
-- In EC2 assume admin user privileges:
+- In EC2 client assume admin user privileges:
 `sudo -u ec2-user -i`
 - Create directory where we will save our connector:
 `mkdir kafka-connect-s3 && cd kafka-connect-s3`
@@ -108,7 +108,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 ##### Step 3: Create a custom plugin
 - Now, open the MSK console and select Custom plugins under the MSK Connect section on the left side of the console.
 - Choose Create custom plugin.
-- Click Browse S3 on the top right of the custom plugin page and find the bucket where you upload the Confluent connector ZIP file.
+- Click Browse S3 on the top right of the custom plugin page and find the bucket where you uploaded the Confluent connector ZIP file.
 - Then, in the list of objects in that bucket select the ZIP file and select the Choose button. Give the plugin a name and press Create custom plugin.
 Once the plugin has been created you should see the following message at the top of your browser window:
 `plugin <PLUGIN_NAME> was successfully created. The custom plugin was created. You can now create a connector using this custom plugin`
@@ -156,8 +156,25 @@ Deploy the API and make a note of the Invoke URL, as you will need it in a later
 Now that you have set up the Kafka REST Proxy integration for your API, you need to set up the Kafka REST Proxy on your EC2 client machine.
 ##### Step 1:
 First, install the Confluent package for the Kafka REST Proxy on your EC2 client machine.
+To be able to consume data using MSK from the API we have just created, we will need to download some additional packages on a client EC2 machine, that will be used to communicate with the MSK cluster.
+To install the REST proxy package run the following commands on your EC2 instance:
+`sudo wget https://packages.confluent.io/archive/7.2/confluent-7.2.0.tar.gz`
+`tar -xvzf confluent-7.2.0.tar.gz`
 ##### Step 2:
 Allow the REST proxy to perform IAM authentication to the MSK cluster by modifying the kafka-rest.properties file.
+To configure the REST proxy to communicate with the desired MSK cluster, and to perform IAM authentication you first need to navigate to confluent-7.2.0/etc/kafka-rest.
+Inside here run the following command to modify the kafka-rest.properties file:
+`nano kafka-rest.properties`
+Add the following to the kafka-rest.properties file: 
+# Sets up TLS for encryption and SASL for authN.
+`client.security.protocol = SASL_SSL`
+# Identifies the SASL mechanism to use.
+`client.sasl.mechanism = AWS_MSK_IAM`
+# Binds SASL client implementation.
+`client.sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="Your Access Role";`
+# Encapsulates constructing a SigV4 signature based on extracted credentials.
+# The SASL client bound by "sasl.jaas.config" invokes this class.
+`client.sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
 ##### Step 3:
 Start the REST proxy on the EC2 client machine.
 
