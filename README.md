@@ -56,7 +56,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 - This package is necessary to connect to MSK clusters that require IAM authentication.
 - Once downloaded, a file named `aws-msk-iam-auth-1.1.5-all.jar` will be shown inside the libs directory.
 - Created `CLASSPATH` variable to store the location of the aws jar file so that it can be accessed from any directory.
-- Save the following command `export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar` inside the `nano ~/.zshrc` file:
+- Save the following command `export CLASSPATH=/home/ec2-user/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.5-all.jar` inside the `nano ~/.bashrc` file:
 - Once saved run `source ~/.zshrc`
 - To verify the path is set run `echo $CLASSPATH` it should return the location of the jar file.
 ##### Step 3: Configure kafka to use AWS IAM service
@@ -86,7 +86,7 @@ Throughout the project we will be using `US- east -1 N.virginia` region for the 
 ##### Step 2:
 - Created three topics namely, userid.pin, userid.geo, userid.user replacing with my userid explicitly using the following syntax:
 `./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name> `
-- Remember to replace the bootstrapserverstring from the cluster information tab while running the create topic command in the terminal.
+- Run the above command inside the kafka/bin folder, Remember to replace the bootstrapserverstring from the cluster information tab while running the above create topic command in the terminal.
 
 ## Milestone 4: Connecting MSK cluster to S3 bucket:
 #### Task 1 : Create a custom plugin with MSK Connect
