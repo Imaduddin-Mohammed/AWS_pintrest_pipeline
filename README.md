@@ -79,7 +79,7 @@ This project aims at emulating a similar system using the AWS Cloud.
 - Go to MSK and select the cluster, and click view client information.
 - Make note of the cluster Bootstrap server string[Private endpoint (single-VPC)] and the Plaintext Apache Zookeeper[TLS/Plaintext] connection string.
 ##### Step 2:
-- Run the below command inside the: `kafka/bin` folder, Remember to replace the bootstrapserverstring from the cluster information tab while running the above create topic command in the terminal: `./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name>`.
+- Run the following command inside the: `kafka/bin` folder, Remember to replace the bootstrapserverstring explicitly: `./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name>`.
 - Created three topics namely, userid.pin, userid.geo, userid.user replacing with my userid explicitly.
 
 ## Milestone 4: Connecting MSK cluster to S3 bucket:
