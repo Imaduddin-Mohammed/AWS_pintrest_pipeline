@@ -69,19 +69,18 @@ This project aims at emulating a similar system using the AWS Cloud.
 #identifies the SASL mechanism to use
 - `sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>/ARN"`
 #binds SASL client implementation,
-- In the above line make sure to enter the IAM EC2 access role we copied FROM the IAM ROLES section in: "<Your Access Role>/ARN" explicitly.
+- In the above line make sure to enter the IAM EC2 access role we copied from the IAM ROLES section in: "<Your Access Role>/ARN" explicitly.
 - `sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler`
 #encapsulates constructing a SigV4 signature based on extracted credentials
 #the SASL client bound by "sasl.jaas.config" invokes this class_post.
 ##### Task 4: Creating topics on the Kafka client
-- As you know before creating a topic we first need to have information about the cluster Bootstrap server string and the Plaintext Apache Zookeeper connection string.
+> As you know before creating a topic we first need to have information about the cluster Bootstrap server string and the Plaintext Apache Zookeeper connection string.
 ##### Step 1:
 - Go to MSK and select the cluster, and click view client information.
 - Make note of the cluster Bootstrap server string[Private endpoint (single-VPC)] and the Plaintext Apache Zookeeper[TLS/Plaintext] connection string.
 ##### Step 2:
-- Created three topics namely, userid.pin, userid.geo, userid.user replacing with my userid explicitly using the following syntax:
-`./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name> `
-- Run the above command inside the kafka/bin folder, Remember to replace the bootstrapserverstring from the cluster information tab while running the above create topic command in the terminal.
+- Run the below command inside the: `kafka/bin` folder, Remember to replace the bootstrapserverstring from the cluster information tab while running the above create topic command in the terminal: `./kafka-topics.sh --bootstrap-server BootstrapServerString --command-config client.properties --create --topic <topic_name>`.
+- Created three topics namely, userid.pin, userid.geo, userid.user replacing with my userid explicitly.
 
 ## Milestone 4: Connecting MSK cluster to S3 bucket:
 ##### Task 1 : Create a custom plugin with MSK Connect
@@ -132,12 +131,10 @@ This project aims at emulating a similar system using the AWS Cloud.
 ## Milestone 5: Batch processing : Configuring an API in API gateway
 ##### Task 1: Build a Kafka REST proxy integration method for the API
 > For this project we will not need to create our own API, as I have been provided with one already. The API name will be the same as UserId.
-
 ##### Step 1: Create a resource that allows you to build a PROXY integration for your API.
 - Navigate to API GATEWAY and enter the userid, find the preconfigured api and then you will be inside RESOURCES pane
 - For Resource Name enter {proxy+} - Proxy integrations provide the selected integration access to many resources and features at once, without specifying multiple resource paths using the greedy parameter. This {proxy+} ensures that we can nest or build upon as many child folders deep inside our root api. Finally, select Enable API Gateway CORS and choose Create Resource.
-- After you create the resource, you can start creating methods for this resource. To use a method, you need to 'integrate' it with an endpoint on the backend
-
+- After you create the resource, you can start creating methods for this resource. To use a method, you need to 'integrate' it with an endpoint on the backend.
 ##### Step 2: Creating 'HTTP ANY' method
 - To set up an integration click on the ANY resource, then on the Edit integration button.
 - For Integration type select HTTP. Make sure to also select the 'HTTP proxy integration' toggle.
@@ -146,7 +143,6 @@ This project aims at emulating a similar system using the AWS Cloud.
 - You can obtain your EC2 Instance Public DNS by navigating to the EC2 console. Here, select your client EC2 machine and look for Public IPv4 DNS and copy this.
 - The endpoint URL should have the following format: `http://KafkaClientEC2InstancePublicDNS:8082/{proxy}`.
 - In the url replace the: `KafkaClientEC2InstancePublicDNS` explicitly.
-
 ##### Step 3: Deploying the API
 - To deploy the API use the Deploy API button in the top-right corner of the API page
 - For Deployment stage, choose New Stage.
@@ -154,10 +150,8 @@ This project aims at emulating a similar system using the AWS Cloud.
 - After Deploying the API make a note of the Invoke URL, as you will need it in a later task.
 - Your external URL will look like:
 `https://YourAPIInvokeURL/test/`.
-
 ##### Task 2: Set up the Kafka REST proxy on the EC2 client
-- Now that you have set up the Kafka REST Proxy integration for your API, you need to set up the Kafka REST Proxy on your EC2 client machine.
-
+> Now that you have set up the Kafka REST Proxy integration for your API, you need to set up the Kafka REST Proxy on your EC2 client machine.
 ##### Step 1: Installing the confluent package for the Kafka REST Proxy on your EC2 client machine
 - To be able to consume data using MSK from the API we have just created, we will need to download some additional packages on a client EC2 machine, that will be used to communicate with the MSK cluster.
 - To install the REST proxy package run the following commands on your EC2 instance:
