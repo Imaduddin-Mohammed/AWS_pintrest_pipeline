@@ -199,8 +199,7 @@ Check if data is getting stored in the S3 bucket. Notice the folder organization
 - df_user for the user data
 
 ##### Step 1: Mount the S3 bucket to Databricks
-1. In Databricks select the new icon and then select notebook
-###### We will need to import the following libraries first:
+###### In Databricks select the new icon and then select notebook, Next We will need to import the following libraries first:
 - `from pyspark.sql.functions import *` #pyspark functions
 - `import urllib` #URL processing
 2. Now let's read the table containing the AWS keys to Databricks using the code below:
@@ -211,7 +210,7 @@ Check if data is getting stored in the S3 bucket. Notice the folder organization
 ###### Get the AWS access key and secret key from the spark dataframe:
 - `ACCESS_KEY = aws_keys_df.select('Access key ID').collect()[0]['Access key ID']`
 - `SECRET_KEY = aws_keys_df.select('Secret access key').collect()[0]['Secret access key']`
-- `ENCODED_SECRET_KEY = urllib.parse.quote(string=SECRET_KEY, safe="")` #Encode the secrete key
+- `ENCODED_SECRET_KEY = urllib.parse.quote(string=SECRET_KEY, safe="")` #Encode the secret key
 
 ##### We can now mount the S3 bucket by passing in the S3 URL and the desired mount name to dbutils.fs.mount(). Make sure to replace the AWS_S3_BUCKET with the name of the bucket you have your data stored into, and MOUNT_NAME with the desired name inside your Databricks workspace.
 
@@ -222,8 +221,8 @@ Check if data is getting stored in the S3 bucket. Notice the folder organization
 ###### The code above will return True if the bucket was mounted successfully. You will only need to mount the bucket once, and then you should be able to access it from Databricks at any time.
 
 - To check if the S3 bucket was mounted succesfully run the following command:
-`display(dbutils.fs.ls("/mnt/dbutils.fs.mount()/../.."))`
-#### Since the data inside the mounted S3 bucket is organised in folders, you can specify the whole path in the above command after /mnt/mount_name. With the correct path specified, you should be able to see the contents of the S3 bucket when running the above command.
+`display(dbutils.fs.ls("/mnt/dbutils.fs.mount()/../.."))`.
+##### Since the data inside the mounted S3 bucket is organised in folders, you can specify the whole path in the above command after /mnt/mount_name. With the correct path specified, you should be able to see the contents of the S3 bucket when running the above command.
 ###### Read the JSON format dataset from S3 into Databricks using the code cells below:
 - `%sql`
 - `SET spark.databricks.delta.formatCheck.enabled=false` #Disable format checks during the reading of Delta tables
@@ -232,8 +231,7 @@ Check if data is getting stored in the S3 bucket. Notice the folder organization
 - `file_location = "/mnt/dbutils.fs.mount()/topics/<userid>.pin/partition=0/*.json"`  #File location and type, #Asterisk(*) indicates reading all the content of the specified file that have .json extension.
 - `file_type = "json"`
 - `infer_schema = "true"` #Ask Spark to infer the schema
-###### Read in JSONs from mounted S3 bucket
-- `df_pin = spark.read.format(file_type) \.option("inferSchema", infer_schema) \.load(file_location)`
+- `df_pin = spark.read.format(file_type) \.option("inferSchema", infer_schema) \.load(file_location)` #Read in JSONs from mounted S3 bucket
 - `display(df_pin)` #Display Spark dataframe to check its content
 
 ###### Geolocation data
@@ -245,7 +243,7 @@ Check if data is getting stored in the S3 bucket. Notice the folder organization
 - `display(df_geo)` #Display Spark dataframe to check its content
 
 ###### User data
-- `file_location = "/mnt/dbutils.fs.mount()/topics/<userid>.user/partition=0/*.json"` #File location and type, #Asterisk(*) indicates reading all the content of the specified file that have .json extension.
+- `file_location = "/mnt/dbutils.fs.mount()/topics/<userid>.user/partition=0/*.json"` #File location and type, #Asterisk(*) indicates reading all the content of the specified file that have .json extension
 - `file_type = "json"`
 - `infer_schema = "true"` #Ask Spark to infer the schema
 - `df_user= spark.read.format(file_type) \.option("inferSchema", infer_schema) \.load(file_location)` #Read in JSONs from mounted S3 bucket
