@@ -200,16 +200,12 @@ Check if data is getting stored in the S3 bucket. Notice the folder organization
 
 ##### Step 1: Mount the S3 bucket to Databricks
 1. In Databricks select the new icon and then select notebook
-- We will need to import the following libraries first:
-- #pyspark functions
-`from pyspark.sql.functions import *`
-#URL processing
-`import urllib`
+###### We will need to import the following libraries first:
+- `from pyspark.sql.functions import *` #pyspark functions
+- `import urllib` #URL processing
 2. Now let's read the table containing the AWS keys to Databricks using the code below:
-#Define the path to the Delta table:
-`delta_table_path = "dbfs:/user/hive/warehouse/authentication_credentials"`
-#Read the Delta table to a Spark DataFrame:
-`aws_keys_df = spark.read.format("delta").load(delta_table_path)`
+- `delta_table_path = "dbfs:/user/hive/warehouse/authentication_credentials"` #Define the path to the Delta table:
+- `aws_keys_df = spark.read.format("delta").load(delta_table_path)` #Read the Delta table to a Spark DataFrame:
 ##### We can extract the access key and secret access key from the spark dataframe created above. The secret access key will be encoded using urllib.parse.quote for security purposes. safe="" means that every character will be encoded.
 
 ###### Get the AWS access key and secret key from the spark dataframe:
